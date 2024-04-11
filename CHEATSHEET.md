@@ -1,5 +1,12 @@
 # Go Cheat Sheet
 
+## Packages
+
+| Command | Description |
+| --- | --- |
+| `go mod init <module-name>` | Initialize a new module |
+| `go mod tidy` | Add missing and remove unused modules |
+
 ## Build
 
 | Command | Description |
