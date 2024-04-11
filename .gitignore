@@ -1,0 +1,11 @@
+# The binary produced
+/server
+# Pycharm
+.idea
+# VSCode settings
+.vscode/**
+!.vscode/settings.default.json
+!.vscode/launch.json
+!.vscode/extensions.json
+# MacOS files
+.DS_Store
