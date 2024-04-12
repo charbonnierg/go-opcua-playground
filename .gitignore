@@ -1,5 +1,7 @@
 # The binary produced
 /server
+/client
+/discover
 # Pycharm
 .idea
 # VSCode settings

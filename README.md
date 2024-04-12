@@ -3,7 +3,7 @@
 ## Objectives
 
 1. Learn how to use the [Go language](https://go.dev/)
-2. Lean how to use the [gopcua](https://github.com/gopcua/opcua) library
+2. Learn how to use the [gopcua](https://github.com/gopcua/opcua) library
 3. Learn how to use [nats.go](https://github.com/nats-io/nats.go) library
 
 ## Steps
@@ -13,7 +13,6 @@
 2. Run a basic OPC-UA client that will read a value from the server
 
 3. Run a basic OPC-UA client that will write a value to the server
-
 
 ## Install
 
