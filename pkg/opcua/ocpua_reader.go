@@ -70,22 +70,22 @@ func (g *GopcuaReader) Read(ctx context.Context, nodeID string) (*ReadVariableRe
 		switch {
 		case err == io.EOF && g.client.State() != opcua.Closed:
 			// has to be retried unless user closed the connection
-			time.After(1 * time.Second)
+			<-time.After(1 * time.Second)
 			continue
 
 		case errors.Is(err, ua.StatusBadSessionIDInvalid):
 			// Session is not activated has to be retried. Session will be recreated internally.
-			time.After(1 * time.Second)
+			<-time.After(1 * time.Second)
 			continue
 
 		case errors.Is(err, ua.StatusBadSessionNotActivated):
 			// Session is invalid has to be retried. Session will be recreated internally.
-			time.After(1 * time.Second)
+			<-time.After(1 * time.Second)
 			continue
 
 		case errors.Is(err, ua.StatusBadSecureChannelIDInvalid):
 			// secure channel will be recreated internally.
-			time.After(1 * time.Second)
+			<-time.After(1 * time.Second)
 			continue
 
 		default:
