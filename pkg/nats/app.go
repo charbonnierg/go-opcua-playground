@@ -22,8 +22,8 @@ type NatsApplication struct {
 	ctx    context.Context
 	conn   *nats.Conn
 
-	NatsServerUrl     string        `json:"nats_server_url,omitempty"`
-	ConnectionTimeout time.Duration `json:"connection_timeout,omitempty"`
+	NatsServerUrl     string        `json:"url,omitempty"`
+	ConnectionTimeout time.Duration `json:"connect_timeout,omitempty"`
 }
 
 // Provision sets up the application.
