@@ -48,18 +48,19 @@ func main() {
 		defer cancel()
 		reader.Close(closeCtx)
 	}()
-
-	// Sleep 10 seconds just to make sure that connect context is ONLY used for connection
+	// Sleep 5 seconds just to make sure that connect context is ONLY used for connection
 	// and can be cancelled before reading
-	<-time.After(10 * time.Second)
+	log.Print("Sleeping for 5 seconds")
+	<-time.After(5 * time.Second)
 
 	// Create a new usecase
 	usecase := opcua.NewReadVariableUsecase(reader)
 	// Create a new context with a timeout
-	usecaseCtx, cancel := context.WithTimeout(rootCtx, 1*time.Second)
+	usecaseCtx, cancel := context.WithTimeout(rootCtx, 10*time.Second)
 	defer cancel()
 	// Read with a timeout of 1 second
 	request := opcua.NewReadVariableRequest(*nodeID)
+	log.Print("Reading variable...")
 	response, err := usecase.Execute(usecaseCtx, request)
 	// Handle errors
 	if err != nil {

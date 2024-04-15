@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"time"
 
 	"github.com/gopcua/opcua"
@@ -65,27 +66,51 @@ func (g *GopcuaReader) Read(ctx context.Context, nodeID string) (*ReadVariableRe
 			break
 		}
 
+		delay := func() error {
+			select {
+			case <-time.After(1 * time.Second):
+				return nil
+			case <-ctx.Done():
+				return ctx.Err()
+			}
+		}
 		// Following switch contains known errors that can be retried by the user.
 		// Best practice is to do it on read operations.
 		switch {
 		case err == io.EOF && g.client.State() != opcua.Closed:
 			// has to be retried unless user closed the connection
-			<-time.After(1 * time.Second)
+			if err := delay(); err != nil {
+				return nil, fmt.Errorf("read failed: %w", err)
+			}
 			continue
 
 		case errors.Is(err, ua.StatusBadSessionIDInvalid):
 			// Session is not activated has to be retried. Session will be recreated internally.
-			<-time.After(1 * time.Second)
+			if err := delay(); err != nil {
+				return nil, fmt.Errorf("read failed: %w", err)
+			}
 			continue
 
 		case errors.Is(err, ua.StatusBadSessionNotActivated):
 			// Session is invalid has to be retried. Session will be recreated internally.
-			<-time.After(1 * time.Second)
+			if err := delay(); err != nil {
+				return nil, fmt.Errorf("read failed: %w", err)
+			}
 			continue
 
 		case errors.Is(err, ua.StatusBadSecureChannelIDInvalid):
 			// secure channel will be recreated internally.
-			<-time.After(1 * time.Second)
+			if err := delay(); err != nil {
+				return nil, fmt.Errorf("read failed: %w", err)
+			}
+			continue
+
+		case errors.Is(err, ua.StatusBadServerNotConnected):
+			log.Print("Server not connected, retrying in 1 second")
+			// client is not connected to the server, wait for reconnection
+			if err := delay(); err != nil {
+				return nil, fmt.Errorf("read failed: %w", err)
+			}
 			continue
 
 		default:
