@@ -35,3 +35,6 @@ func (a *NatsApplication) Stop() error {
 	a.logger.Info("NatsApplication stopped")
 	return nil
 }
+
+// Typeguards
+var _ App = &NatsApplication{}
