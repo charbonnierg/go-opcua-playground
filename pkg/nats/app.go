@@ -5,16 +5,11 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/caddyserver/caddy/v2"
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/micro"
 	"go.uber.org/zap"
 )
-
-type App interface {
-	Provision(ctx context.Context) error
-	Start() error
-	Stop() error
-}
 
 func NewApplication(serverUrl string) *NatsApplication {
 	return &NatsApplication{
@@ -23,16 +18,17 @@ func NewApplication(serverUrl string) *NatsApplication {
 }
 
 type NatsApplication struct {
-	logger            *zap.Logger
-	ctx               context.Context
-	conn              *nats.Conn
-	NatsServerUrl     string
-	ConnectionTimeout time.Duration
+	logger *zap.Logger
+	ctx    context.Context
+	conn   *nats.Conn
+
+	NatsServerUrl     string        `json:"nats_server_url,omitempty"`
+	ConnectionTimeout time.Duration `json:"connection_timeout,omitempty"`
 }
 
 // Provision sets up the application.
-func (a *NatsApplication) Provision(ctx context.Context) error {
-	a.logger = zap.NewExample()
+func (a *NatsApplication) Provision(ctx caddy.Context) error {
+	a.logger = ctx.Logger()
 	a.ctx = ctx
 	return nil
 }
@@ -106,4 +102,7 @@ func (h HandlerFunc) Handle(msg micro.Request) {
 }
 
 // Typeguards
-var _ App = &NatsApplication{}
+var (
+	_ caddy.App         = &NatsApplication{}
+	_ caddy.Provisioner = &NatsApplication{}
+)

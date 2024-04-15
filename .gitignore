@@ -2,6 +2,7 @@
 /server
 /client
 /discover
+/caddy
 # Pycharm
 .idea
 # VSCode settings
